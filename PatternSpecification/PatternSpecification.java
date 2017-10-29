@@ -19,7 +19,11 @@ public class PatternSpecification {
     public static final String spaceLimtationMiddle = "\\\\s\\\\b\\\\w+\\\\b";
     public static final String normalNumber = "([\\\\w\\\\s]+)";
     public static final String greedy = "(.*?)";
-    
+    /**
+     * Converts the command line argument list into a single string.
+     * @param args the commandline arguements
+     * @return the command line arguments as a string
+     */
     private static String returnArgumentString(String[] args){
         String input = "";
         for(int i = 0; i < args.length; i++){
@@ -35,8 +39,8 @@ public class PatternSpecification {
     /**
      * Converts a specification string into an array list containing the numbers and letters corresponding to
      * the inner part of: %{ }.
-     * @param spec The string provided as command line argument - specification string.
-     * @return An ArrayList containing the inner parts of %{ }.
+     * @param spec the string provided as command line argument - specification string.
+     * @return an ArrayList containing the inner parts of %{ }.
      */
     private static ArrayList<String> convertSpecification(String spec){
         ArrayList<String> ptrn = new ArrayList<String>();
@@ -73,13 +77,13 @@ public class PatternSpecification {
     }
     /**
      * Creates a regular expression that represents the pattern specification.
-     * @param spec the list containing the seperate specification parts.
+     * @param spec the list containing the token capture sequences.
      * @param patternSpec the original pattern specification to base the regular expression on.
      * @return a regular expression representing the pattern specification.
      */
     private static String createRegex(ArrayList<String> spec, String patternSpec){
         String result = patternSpec;
-        //Iterate through the token capture sequences extracted from the command line argument.
+        //Iterate through the list of token capture sequences.
         for(int i = 0; i < spec.size(); i++){
             //Check whether the the arraylist element is empty.
             if(!spec.get(i).isEmpty()){
@@ -87,17 +91,17 @@ public class PatternSpecification {
                 //Simplest case %{#}, replace the number with a simple regular expression.
                 if(isNumeric(spec.get(i))){
                     result = result.replaceAll("\\%\\{(" + spec.get(i) + ")\\}", normalNumber);
-                    /*Greedy case %{#G}, Check whether last character of sequence is 'G'
-                     * and the preceeding number is a non-negative number.
-                     */
+                /* Greedy case %{#G}, Check whether last character of sequence is 'G'
+                 * and the preceeding number is a non-negative integer.
+                 */
                 } else if (spec.get(i).charAt(specLength - 1) == 'G' && isNumeric(spec.get(i).substring(0, specLength - 1))) {
                     result = result.replaceAll("\\%\\{(" + spec.get(i) + ")\\}", greedy);
-                    /*
-                     * Space limitation case %{#S#} - Iterate through the sequences characters extracting the preceding and
-                     * proceeding numbers adjacent to the 'S' character.
-                     * Following that, as long as both numbers are non negative integers, build up the space limitation regex
-                     * so it represents the number of spaces specified by the token capture sequence.
-                     */
+                /*
+                 * Space limitation case %{#S#} - Iterate through the sequence's characters extracting the
+                 * preceding and proceeding numbers adjacent to the 'S' character.
+                 * Following that, as long as both numbers are non negative integers, build up the space limitation regex
+                 * so it represents the number of spaces specified by the token capture sequence.
+                 */
                 } else {
                     
                     for(int j = 0; j < specLength; j++){
