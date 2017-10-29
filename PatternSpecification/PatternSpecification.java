@@ -89,11 +89,12 @@ public class PatternSpecification {
 				StringBuilder spaceRegex = new StringBuilder();
 				spaceRegex.append(spaceLimitationStart);
 				int numberOfSpaces = Integer.parseInt(spec.get(i).substring(2, 3));
-
+				String valueOfSpaces = spec.get(i).substring(2, 3);
 				for(int j = 0; j < numberOfSpaces; j++){
 					spaceRegex.append(spaceLimtationMiddle);
 				}
-				result = result.replaceAll("\\%\\{(\\dS\\d)\\}", spaceRegex.toString());
+				String replaceString = "\\%\\{(\\dS" + valueOfSpaces + ")\\}";
+				result = result.replaceAll(replaceString, spaceRegex.toString());
 
 
 			} else {
@@ -110,33 +111,33 @@ public class PatternSpecification {
 	 * @param line2BeMatched the line read from stdin to be matched against the regex
 	 * @param regex the regex to match the line against.
 	 * @return the string line2BeMatched if it matched the regex.
+	 * !!! return boolean instead!!!
 	 */
-	private static String match(String line2BeMatched, String regex){
+	private static boolean match(String line2BeMatched, String regex){
 
 		Pattern p = Pattern.compile(regex);
 		Matcher m = p.matcher(line2BeMatched);
 		if(m.matches()){
-			return line2BeMatched;
+			return true;
 		} else {
-			return "";
+			return false;
 		}
 
 	}
 
 	public static void main(String[] args){
 		String argString = returnArgumentString(args);
-		String result = createRegex(convertSpecification(argString), argString);
+		String regex = createRegex(convertSpecification(argString), argString);
 		InputStreamReader isReader = new InputStreamReader(System.in);
 		BufferedReader bufReader = new BufferedReader(isReader);
-
 		String readLine = "";
 		try {
 			while(bufReader.ready()){
 
 				readLine = bufReader.readLine();
-				String matchedString = match(readLine, result);
-				if(matchedString != ""){
-					System.out.println(matchedString);
+
+				if(match(readLine, regex)){
+					System.out.println(readLine);
 				}
 			}
 		} catch (IOException e) {
