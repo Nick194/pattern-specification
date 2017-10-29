@@ -139,7 +139,6 @@ public class PatternSpecification {
 		String regex = createRegex(convertSpecification(argString), argString);
 		InputStreamReader isReader = new InputStreamReader(System.in);
 		BufferedReader bufReader = new BufferedReader(isReader);
-		System.out.println(regex);
 		String readLine = "";
 		try {
 			while(bufReader.ready()){
