@@ -85,15 +85,25 @@ public class PatternSpecification {
 			} else if (specLength == 2 && isNumeric(spec.get(i).substring(0, 1)) && spec.get(i).charAt(1) == 'G'){
 				result = result.replaceAll("\\%\\{(\\dG)\\}", greedy);
 
-			} else if (specLength == 3 && isNumeric(spec.get(i).substring(0, 1)) && spec.get(i).charAt(1) == 'S') {
+			} else if (specLength > 2) {
 				StringBuilder spaceRegex = new StringBuilder();
 				spaceRegex.append(spaceLimitationStart);
-				int numberOfSpaces = Integer.parseInt(spec.get(i).substring(2, 3));
-				String valueOfSpaces = spec.get(i).substring(2, 3);
-				for(int j = 0; j < numberOfSpaces; j++){
+				int numberOfSpaces = 0;
+				String valueOfSpaces = "";
+				String numberBeforeS = "";
+				for(int j = 0; j < specLength; j++){
+
+					if(spec.get(i).charAt(j) == 'S'){
+						numberOfSpaces = Integer.parseInt(spec.get(i).substring(j+1));
+						valueOfSpaces = spec.get(i).substring(j+1);
+						numberBeforeS = spec.get(i).substring(0, j);
+					}
+				}
+
+				for(int k = 0; k < numberOfSpaces; k++){
 					spaceRegex.append(spaceLimtationMiddle);
 				}
-				String replaceString = "\\%\\{(\\dS" + valueOfSpaces + ")\\}";
+				String replaceString = "\\%\\{(" + numberBeforeS + "S" + valueOfSpaces + ")\\}";
 				result = result.replaceAll(replaceString, spaceRegex.toString());
 
 
@@ -111,7 +121,6 @@ public class PatternSpecification {
 	 * @param line2BeMatched the line read from stdin to be matched against the regex
 	 * @param regex the regex to match the line against.
 	 * @return the string line2BeMatched if it matched the regex.
-	 * !!! return boolean instead!!!
 	 */
 	private static boolean match(String line2BeMatched, String regex){
 
@@ -130,6 +139,7 @@ public class PatternSpecification {
 		String regex = createRegex(convertSpecification(argString), argString);
 		InputStreamReader isReader = new InputStreamReader(System.in);
 		BufferedReader bufReader = new BufferedReader(isReader);
+		System.out.println(regex);
 		String readLine = "";
 		try {
 			while(bufReader.ready()){
