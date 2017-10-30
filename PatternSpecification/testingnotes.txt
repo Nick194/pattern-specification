@@ -1,0 +1,20 @@
+## Here is a set of bash commands and their outputs in order to check for correctness.
+
+cat simple.txt | java PatternSpecification "foo %{0} is a %{1}"
+
+foo blah is a bar
+foo blah is a very big boat
+
+cat greedy.txt | java PatternSpecification "bar %{0G} foo %{1}"
+
+bar foo bar foo bar foo bar foo
+bar foo blah is a very big foo boat
+
+cat spacelimit.txt | java PatternSpecification "one %{0S3} and %{1S4} end"
+
+one 1 2 3 4 and 1 2 3 4 5 end
+one A B C D and A B C D E end
+
+cat spacelimit.txt | java PatternSpecification "one %{0S2} and %{1S4} end"
+
+one 1 2 3 and 1 2 3 4 5 end
